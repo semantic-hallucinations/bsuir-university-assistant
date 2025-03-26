@@ -1,6 +1,8 @@
 from .database import init_db, close_db_connections, get_session
 from .schemas import Token
 from .models import User
+from .oauth2 import create_access_token
+from .utils import verify
 
 from fastapi import FastAPI, Depends, HTTPException, status
 from contextlib import asynccontextmanager
@@ -28,9 +30,9 @@ async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Asy
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, data="Invalid Credantials")
     
-    verify = await verify(user_credentials.password, user.password)
+    ver = await verify(user_credentials.password, user.password)
    
-    if not verify:
+    if not ver:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, data="Invalid Credantials")
 
     access_token = await create_access_token(data={"user_id": user.id})

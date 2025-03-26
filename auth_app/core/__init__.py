@@ -1,3 +1,3 @@
-from .settings import auth_settings
+from .settings import auth_settings, jwt_settings
 
-__all__ = ["auth_settings"]
+__all__ = ["auth_settings", "jwt_settings"]

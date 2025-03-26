@@ -1,3 +1,3 @@
-from .token import Token
+from .token import Token, TokenData
 
-__all__ = ["Token"]
+__all__ = ["Token", "TokenData"]
