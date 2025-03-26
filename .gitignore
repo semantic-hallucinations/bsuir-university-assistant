@@ -1,3 +1,9 @@
+# Project specific
+lab1.pdf
+lab1.txt
+temp.py
+PROJECT_STRUCTURE
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
