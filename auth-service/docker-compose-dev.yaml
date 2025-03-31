@@ -1,0 +1,40 @@
+services:
+  api:
+    build: .
+    ports: 
+      - 8000:8000
+    volumes:
+      - ./:/usr/src/app
+    environment:
+      - PGHOST=post_app_db
+      - PGPORT=${PGPORT}
+      - PGPASSWORD=${PGPASSWORD}
+      - PGDATABASE=${PGDATABASE}
+      - PGUSER=${PGUSER}
+      - SECRET_KEY=${SECRET_KEY}
+      - ALGORITHM=${ALGORITHM}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+    command: uvicorn auth_app.main:auth_app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      - post_app_db
+    restart: on-failure
+  post_app_db:
+    image: "postgres:latest"
+    environment:
+      POSTGRES_DB: ${PGDATABASE}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_USER:  ${PGUSER}
+    volumes:
+      - 'db-data:/var/lib/postgresql/data'
+    ports: 
+      - "${PGPORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} -d ${PGDATABASE} -p 5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+volumes:
+  db-data:
+    driver: local

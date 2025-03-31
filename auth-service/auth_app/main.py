@@ -7,6 +7,7 @@ from .utils import verify
 from fastapi import FastAPI, Depends, HTTPException, status
 from contextlib import asynccontextmanager
 from fastapi.security.oauth2 import OAuth2PasswordRequestForm
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 @asynccontextmanager
@@ -25,15 +26,16 @@ async def root():
 
 @auth_app.post("/login", response_model=Token)
 async def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = Depends(get_session)):
-    user = await db.query(User).filter(User.login == user_credentials.username).first()
+    result = await db.execute(select(User).where(User.login == user_credentials.username))
+    user = result.scalars().first()
     
     if not user:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, data="Invalid Credantials")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credantials")
     
     ver = await verify(user_credentials.password, user.password)
    
     if not ver:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, data="Invalid Credantials")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credantials")
 
     access_token = await create_access_token(data={"user_id": user.id})
 
