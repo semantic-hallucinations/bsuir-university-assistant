@@ -43,7 +43,7 @@ class ChatGPTClient(LLMClient):
             response.raise_for_status()
             models = response.json().get('data', [])
             for model in models:
-                if model.get('name') == self.model_name:
+                if model.get('id') == self.model_name:
                     return model.get('context_length', None)
             return None
         except requests.exceptions.RequestException as e:
