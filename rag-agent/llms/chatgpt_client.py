@@ -1,6 +1,7 @@
 from typing import override
 
 from openai import OpenAI
+import requests
 
 from .llm_client import LLMClient
 from ..settings import settings
@@ -34,3 +35,17 @@ class ChatGPTClient(LLMClient):
             return response
         else:
             return response.choices[0].message.content
+        
+    def get_max_context_len(self):
+        url = "https://openrouter.ai/api/v1/models"
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            models = response.json().get('data', [])
+            for model in models:
+                if model.get('name') == self.model_name:
+                    return model.get('context_length', None)
+            return None
+        except requests.exceptions.RequestException as e:
+            print(f"Ошибка при запросе: {e}")
+            return None
