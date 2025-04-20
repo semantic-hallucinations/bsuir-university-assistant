@@ -2,7 +2,7 @@ from typing import override
 
 from openai import OpenAI
 
-from ..llm_client import LLMClient
+from .llm_client import LLMClient
 
 
 class ChatGPTClient(LLMClient):
