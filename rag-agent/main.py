@@ -26,10 +26,19 @@ Settings.embed_model = HuggingFaceEmbedding(
 
 app = FastAPI()
 
+
+def get_mock_index():
+    from llama_index.core import SimpleKeywordTableIndex, SimpleDirectoryReader
+
+    documents = SimpleDirectoryReader("data").load_data()
+    return SimpleKeywordTableIndex.from_documents(documents) 
+
+from pipeline.dependencies import get_index
+app.dependency_overrides[get_index] = get_mock_index
+
 @app.get("/")
 def main(
     message: str,
     chat_engine: BaseChatEngine = Depends(get_chat_engine)
 ):
-    response = chat_engine.chat(message)
-    return response 
+    return chat_engine.chat(message) 
