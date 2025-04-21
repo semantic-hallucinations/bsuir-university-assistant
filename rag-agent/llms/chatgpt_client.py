@@ -12,7 +12,7 @@ class ChatGPTClient(LLMClient):
         self,
         token: str = settings.get_model_key(),
         model_name: str = settings.get_model_name(),
-        system_prompt: str = "You are an unbiased and helpful bot, you never lie or make things up",
+        system_prompt: str = "Ты бот для ответов на вопросы по заданному контексту. Отвечай на русском, отвечай официально и уважительно. На все вопросы не по теме отвечай универсальной заглушкой: вы задали вопрос не по теме.",
         include_metadata: bool = False,
     ):
         self.model_name = model_name
