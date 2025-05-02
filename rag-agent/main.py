@@ -16,7 +16,7 @@ from pipeline.dependencies import get_chat_engine
 
 
 Settings.llm = OpenRouter(
-    model="qwen/qwen2.5-vl-3b-instruct:free",
+    model=settings.get_model_name(),
     api_key=settings.get_model_key(),
 )
 Settings.embed_model = HuggingFaceEmbedding(

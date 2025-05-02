@@ -2,12 +2,15 @@ from qdrant_client import QdrantClient, models
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from llama_index.core import VectorStoreIndex
 from llama_index.core.chat_engine.types import ChatMode
+# from llama_index.core.memory import ChatSummaryMemoryBuffer
 from llama_index.core.indices.base import BaseIndex
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
-from fastapi import Depends
-
+from fastapi import Depends, Request
+# from llama_index.llms.openrouter import OpenRouter
+# import tiktoken
 from settings import settings
-
+from .memory import memory_manager
+from uuid import uuid4
 
 def get_qdrant_client():
     client =   QdrantClient(
@@ -37,7 +40,9 @@ def get_index(
     return VectorStoreIndex.from_vector_store(vector_store)
 
 
-def get_chat_engine(
-    index: BaseIndex = Depends(get_index)
-):
-    return index.as_chat_engine(ChatMode.CONTEXT) # TODO chat engine
+def get_chat_engine(index: BaseIndex = Depends(get_index)):
+    return index.as_chat_engine(
+        chat_mode=ChatMode.CONTEXT,
+        memory=memory_manager.memory,
+        verbose=True
+    )
